@@ -9,19 +9,28 @@ public class Vec2i implements Cloneable {
   private int y;
 
   public static final Vec2i ORIGIN = new Vec2i(0, 0);
+  public static final Vec2i UNIT_X = new Vec2i(1, 0);
+  public static final Vec2i UNIT_Y = new Vec2i(0, 1);
+  public static final Vec2i VEC1 = new Vec2i(1, 1);
 
+  public Vec2i() {
+    this.x = 0;
+    this.y = 0;
+  }
+  
+  
   public Vec2i(int x, int y) {
     this.x = x;
     this.y = y;
   }
-  
+
   public boolean equals(Object other) {
     if (other instanceof Vec2i) {
       return ((Vec2i) other).x == x && ((Vec2i) other).y == y;
     }
     return false;
   }
-  
+
   public int hashCode() {
     return x * HASHSEED + y;
   }
@@ -60,6 +69,10 @@ public class Vec2i implements Cloneable {
   public Vec2i mul(int factor) {
     return new Vec2i(x * factor, y * factor);
   }
+  
+  public Vec2i mul(Vec2i factor) {
+    return new Vec2i(x * factor.x, y * factor.y);
+  }
 
   public Iterable<Vec2i> iterateCircle(int radius) {
     List<Vec2i> positions = new ArrayList<Vec2i>();
@@ -84,10 +97,31 @@ public class Vec2i implements Cloneable {
     }
     return positions;
   }
-  
+
+  @Deprecated
+  public Iterable<Vec2i> iterateRect(Vec2i size) {
+    List<Vec2i> positions = new ArrayList<Vec2i>();
+    for (int ly = 0; ly < size.y(); ly++) {
+      for (int lx = 0; lx < size.x(); lx++) {
+        positions.add(new Vec2i(x + lx, y + ly));
+      }
+    }
+    return positions;
+  }
+
+  public Iterable<Vec2i> iterateRectAt(Vec2i pos) {
+    List<Vec2i> positions = new ArrayList<Vec2i>();
+    for (int ly = 0; ly < y; ly++) {
+      for (int lx = 0; lx < x; lx++) {
+        positions.add(new Vec2i(pos.x + lx, pos.y + ly));
+      }
+    }
+    return positions;
+  }
+
   public Iterable<Vec2i> iterateCross(int radius) {
     List<Vec2i> positions = new ArrayList<Vec2i>();
-    for(int cnt = -radius; cnt <= radius; cnt++) {
+    for (int cnt = -radius; cnt <= radius; cnt++) {
       positions.add(new Vec2i(x, y + cnt));
       positions.add(new Vec2i(x + cnt, y));
     }
@@ -115,11 +149,123 @@ public class Vec2i implements Cloneable {
   }
 
   public Vec2i divide(float unit) {
-    return new Vec2i((int)(x / unit), (int)(y / unit));
+    return new Vec2i((int) (x / unit), (int) (y / unit));
   }
 
   public Vec2f toVec2f() {
     return new Vec2f(x, y);
+  }
+
+  public int index(int width) {
+    return y * width + x;
+  }
+
+  public int rectArea() {
+    return y * x;
+  }
+
+  public List<Vec2i> getDiamond(int size) {
+    List<Vec2i> vecs = new ArrayList<Vec2i>();
+    Vec2i left = add(new Vec2i(-1, -1).mul(size));
+    Vec2i leftTop = left.add(new Vec2i(1, -1).mul(size));
+    left = leftTop;
+    for (int cnty = 0; cnty < size * 2 + 1; cnty++) {
+      Vec2i curx = leftTop.add(new Vec2i(-1, 1).mul(cnty));
+      for (int cntx = 0; cntx < size * 4 + 1; cntx++) {
+        vecs.add(curx);
+        if (cntx % 2 == 0) {
+          curx = curx.add(new Vec2i(1, 0));
+        } else {
+          curx = curx.add(new Vec2i(0, 1));
+        }
+      }
+    }
+    return vecs;
+  }
+
+  public List<Vec2i> getDiamond(int x, int y) {
+    List<Vec2i> vecs = new ArrayList<Vec2i>();
+    Vec2i left = add(new Vec2i(-1, -1).mul(x));
+    Vec2i leftTop = left.add(new Vec2i(1, -1).mul(y));
+    left = leftTop;
+    for (int cnty = 0; cnty < y * 2 + 1; cnty++) {
+      Vec2i curx = leftTop.add(new Vec2i(-1, 1).mul(cnty));
+      for (int cntx = 0; cntx < x * 4 + 1; cntx++) {
+        vecs.add(curx);
+        if (cntx % 2 == 0) {
+          curx = curx.add(new Vec2i(1, 0));
+        } else {
+          curx = curx.add(new Vec2i(0, 1));
+        }
+      }
+    }
+    return vecs;
+  }
+
+  public List<Vec2i> lineTo(Vec2i position, boolean exclusive) {
+    List<Vec2i> line = new ArrayList<Vec2i>();
+
+    Vec2i a = this;
+    Vec2i b = position;
+
+    Vec2i delta = b.sub(a);
+    
+    Vec2i deltaAbs = delta.abs();
+
+    if (deltaAbs.x >= deltaAbs.y) { // iterate along x-axis
+
+      if (a.x > b.x) {
+        Vec2i temp = a;
+        a = b;
+        b = temp;
+        delta = delta.mul(-1);
+      }
+      for (int x = a.x + 1; x < b.x; x++) {
+        int y = Math.round((x - a.x) * delta.y / (float)delta.x) + a.y;
+        line.add(new Vec2i(x, y));
+      }
+
+    } else { // iterate along y-axis
+      if (a.y > b.y) {
+        Vec2i temp = a;
+        a = b;
+        b = temp;
+        delta = delta.mul(-1);
+      }
+
+      for (int y = a.y + 1; y < b.y; y++) {
+        int x = Math.round((y - a.y) * delta.x / (float)delta.y) + a.x;
+        line.add(new Vec2i(x, y));
+
+      }
+    }
+
+    return line;
+  }
+
+  private Vec2i abs() {
+    return new Vec2i(Math.abs(x), Math.abs(y));
+  }
+
+  public float length() {
+    return (float)Math.sqrt(x * x + y * y);
+  }
+
+  public float length(Vec2i other) {
+    Vec2i diff = other.sub(this);
+    return (float)Math.sqrt(diff.x * diff.x + diff.y * diff.y);
+  }
+
+  public float shortestLength(List<Vec2i> vecs) {
+    float shortest = Float.MAX_VALUE;
+    
+    for(Vec2i o: vecs) {
+      if(length(o) < shortest) {
+        shortest = length(o);
+      }
+    }
+    
+    return shortest;
   }
 
 }

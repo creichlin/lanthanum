@@ -1,0 +1,6 @@
+<ivy-module version="2.0">
+  <info organisation="ch.kerbtier" module="lanthanum"/>
+  <dependencies>
+    <dependency org="org.testng" name="testng" rev="6.8.8"/>
+  </dependencies>
+</ivy-module>
