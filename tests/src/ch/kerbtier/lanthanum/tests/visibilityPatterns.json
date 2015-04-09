@@ -1,0 +1,26 @@
+{
+  t1: {
+    blocks:
+    [
+      "OOOOOOOOOOO",
+      " OOOOOOOOO ",
+      "  OOOOOOO  ",
+      "   OOOOO   ",
+      "   #OOO#   ",
+      "   #OXO#   "
+    ]
+  },
+  t2: {
+    blocks:
+    [
+      " OOOOOOOOO ",
+      "  OOOOOOO  ",
+      "  OOOOOOO  ",
+      "   OOOOO   ",
+      "    OOO    ",
+      "   #OOO#   ",
+      "   #OOO#   ",
+      "   #OXO#   "
+    ]
+  }  
+}

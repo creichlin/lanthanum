@@ -13,7 +13,7 @@ public class Vec2iLineSteps {
     
     for(Vec2i target: new Vec2i(0, 0).iterateCircle(10)) {
       if(target.length() >= 10) {
-      String sb = Util.drawGrid(new Line2i(-10, -10, 11, 11), new Vec2i(0, 0).lineTo(target, true));
+      String sb = Util.drawGrid(new Line2i(-10, -10, 11, 11), new Vec2i(0, 0).lineToBf(target, true));
       System.out.println(sb);
       }
       

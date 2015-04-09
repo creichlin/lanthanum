@@ -17,8 +17,7 @@ public class Vec2i implements Cloneable {
     this.x = 0;
     this.y = 0;
   }
-  
-  
+
   public Vec2i(int x, int y) {
     this.x = x;
     this.y = y;
@@ -47,6 +46,14 @@ public class Vec2i implements Cloneable {
   public int y() {
     return y;
   }
+  
+  public int getX() {
+    return x;
+  }
+  
+  public int getY() {
+    return y;
+  }
 
   public Vec2i add(Vec2i pos) {
     return new Vec2i(x + pos.x, y + pos.y);
@@ -69,19 +76,25 @@ public class Vec2i implements Cloneable {
   public Vec2i mul(int factor) {
     return new Vec2i(x * factor, y * factor);
   }
-  
+
   public Vec2i mul(Vec2i factor) {
     return new Vec2i(x * factor.x, y * factor.y);
   }
 
   public Iterable<Vec2i> iterateCircle(int radius) {
+    return iterateCircle(radius, false);
+  }
+
+  public Iterable<Vec2i> iterateCircle(int radius, boolean noFill) {
     List<Vec2i> positions = new ArrayList<Vec2i>();
     for (int cy = -radius; cy <= radius; cy++) {
       for (int cx = -radius; cx <= radius; cx++) {
         int dist = cx * cx + cy * cy;
 
         if (dist <= radius * radius) {
-          positions.add(new Vec2i(x + cx, y + cy));
+          if (!noFill || dist > (radius - 1) * (radius - 1)) {
+            positions.add(new Vec2i(x + cx, y + cy));
+          }
         }
       }
     }
@@ -202,6 +215,43 @@ public class Vec2i implements Cloneable {
     return vecs;
   }
 
+  /**
+   * this algorithm calculates fat lines. they are properly mirrored and used
+   * for a quite good visibility algorithm
+   * 
+   * @param position
+   * @param exclusive
+   * @return
+   */
+  public List<Vec2i> lineToBf(Vec2i position, boolean exclusive) {
+    List<Vec2i> list = new ArrayList<Vec2i>();
+    Vec2i delta = position.sub(this);
+    for (int cnt = 0; cnt < 100; cnt++) {
+
+      Vec2f n = this.toVec2f().add(delta.toVec2f().mul(cnt / 99.0f));
+
+      Vec2i x = n.round();
+
+      if (!list.contains(x)) {
+        list.add(x);
+      }
+    }
+
+    if (exclusive) {
+      list.remove(this);
+      list.remove(position);
+    }
+
+    return list;
+  }
+
+  /**
+   * algorithm produces wrongly mirrirred lines... weird.
+   * 
+   * @param position
+   * @param exclusive
+   * @return
+   */
   public List<Vec2i> lineTo(Vec2i position, boolean exclusive) {
     List<Vec2i> line = new ArrayList<Vec2i>();
 
@@ -209,7 +259,7 @@ public class Vec2i implements Cloneable {
     Vec2i b = position;
 
     Vec2i delta = b.sub(a);
-    
+
     Vec2i deltaAbs = delta.abs();
 
     if (deltaAbs.x >= deltaAbs.y) { // iterate along x-axis
@@ -221,7 +271,7 @@ public class Vec2i implements Cloneable {
         delta = delta.mul(-1);
       }
       for (int x = a.x + 1; x < b.x; x++) {
-        int y = Math.round((x - a.x) * delta.y / (float)delta.x) + a.y;
+        int y = roundAbsolute((x - a.x) * delta.y / (float) delta.x) + a.y;
         line.add(new Vec2i(x, y));
       }
 
@@ -234,7 +284,7 @@ public class Vec2i implements Cloneable {
       }
 
       for (int y = a.y + 1; y < b.y; y++) {
-        int x = Math.round((y - a.y) * delta.x / (float)delta.y) + a.x;
+        int x = roundAbsolute((y - a.y) * delta.x / (float) delta.y) + a.x;
         line.add(new Vec2i(x, y));
 
       }
@@ -248,24 +298,51 @@ public class Vec2i implements Cloneable {
   }
 
   public float length() {
-    return (float)Math.sqrt(x * x + y * y);
+    return (float) Math.sqrt(x * x + y * y);
   }
 
   public float length(Vec2i other) {
     Vec2i diff = other.sub(this);
-    return (float)Math.sqrt(diff.x * diff.x + diff.y * diff.y);
+    return (float) Math.sqrt(diff.x * diff.x + diff.y * diff.y);
   }
 
   public float shortestLength(List<Vec2i> vecs) {
     float shortest = Float.MAX_VALUE;
-    
-    for(Vec2i o: vecs) {
-      if(length(o) < shortest) {
+
+    for (Vec2i o : vecs) {
+      if (length(o) < shortest) {
         shortest = length(o);
       }
     }
-    
+
     return shortest;
+  }
+
+  public Vec2i independentMax(Vec2i vec) {
+    return new Vec2i(Math.max(x, vec.x), Math.max(y, vec.y));
+  }
+
+  private static int roundAbsolute(float i) {
+    if (i < 0) {
+      return -Math.round(-i);
+    }
+    return Math.round(i);
+  }
+
+  public Vec2i fromIndex(int cnt) {
+    return new Vec2i(cnt % x, cnt / x);
+  }
+
+  public int getArea() {
+    return x * y;
+  }
+
+  public Vec2i min(Vec2i vec) {
+    return new Vec2i(Math.min(x, vec.x()), Math.min(y, vec.y()));
+  }
+
+  public Vec2i max(Vec2i vec) {
+    return new Vec2i(Math.max(x, vec.x()), Math.max(y, vec.y()));
   }
 
 }

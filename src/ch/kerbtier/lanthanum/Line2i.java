@@ -87,6 +87,10 @@ public class Line2i {
     return new Line2i(start.x() - i, start.y() - i, ex() + i, ey() + i);
   }
 
+  public Line2i expandBy(int horizontal, int vertical) {
+    return new Line2i(start.x() - horizontal, start.y() - vertical, ex() + horizontal, ey() + vertical);
+  }
+
   public Iterable<Vec2i> iterateRect() {
     return toVector().iterateRectAt(start);
   }

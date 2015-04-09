@@ -15,6 +15,14 @@ public class Random {
 
   public Random(int seed, int factor, int summand, int modulo) {
     this.seed = seed;
+    
+    // seed needs to be normalized to 0..modulo-1
+    if(this.seed < 0) {
+      this.seed *= -1;
+    }
+    
+    this.seed %= modulo;
+    
     this.factor = factor;
     this.summand = summand;
     this.modulo = modulo;
@@ -120,5 +128,9 @@ public class Random {
 
   public float nextFloat(float total) {
     return nextInt() * total / modulo;
+  }
+
+  public int getModulo() {
+    return modulo;
   }
 }

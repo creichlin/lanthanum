@@ -137,4 +137,8 @@ public class Vec2f implements Cloneable, Comparable<Vec2f> {
     return cmp;
   }
 
+  public Vec2i round() {
+    return new Vec2i(Math.round(x), Math.round(y));
+  }
+
 }

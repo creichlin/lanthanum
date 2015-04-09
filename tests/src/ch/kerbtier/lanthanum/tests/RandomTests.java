@@ -6,6 +6,30 @@ import org.testng.annotations.Test;
 import ch.kerbtier.lanthanum.Random;
 
 public class RandomTests {
+  
+  
+  
+  
+  @Test
+  public void testRandom14Ranges() {
+    for(int cnt = 0; cnt < 100; cnt++) {
+      testRandom14Range();
+    }
+  }
+  
+  public void testRandom14Range() {
+    int seed = new java.util.Random().nextInt();
+    Random r = Random.get14(seed);
+    
+    for(int cnt = 0; cnt < 100; cnt++) {
+      int value = r.nextInt();
+      assertTrue(value >= 0 && value < r.getModulo());
+    }
+  }
+  
+  
+  
+  
   @Test
   public void testRandomDoIncrease1() {
 
