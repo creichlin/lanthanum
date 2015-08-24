@@ -57,6 +57,10 @@ public class Vec2f implements Cloneable, Comparable<Vec2f> {
     return (float) Math.sqrt(x * x + y * y);
   }
 
+  public float lengthSquared() {
+    return x * x + y * y;
+}
+
   public Vec2f div(float divisor) {
     return new Vec2f(x / divisor, y / divisor);
   }
@@ -139,6 +143,22 @@ public class Vec2f implements Cloneable, Comparable<Vec2f> {
 
   public Vec2i round() {
     return new Vec2i(Math.round(x), Math.round(y));
+  }
+
+  public float distance(Vec2f target) {
+    return target.sub(this).length();
+  }
+
+  public Vec2f max(Vec2f o) {
+    return new Vec2f(Math.max(x,  o.x), Math.max(y, o.y));
+  }
+
+  public Vec2f min(Vec2f o) {
+    return new Vec2f(Math.min(x,  o.x), Math.min(y, o.y));
+  }
+
+  public Vec2f div(Vec2f divisor) {
+    return new Vec2f(x / divisor.x, y / divisor.y);
   }
 
 }

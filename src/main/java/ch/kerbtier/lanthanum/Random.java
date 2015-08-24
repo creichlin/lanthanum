@@ -95,7 +95,7 @@ public class Random {
   }
 
   private static boolean isCompleteLoop(Random random) {
-    List<Integer> used = new ArrayList<Integer>();
+    List<Integer> used = new ArrayList<>();
 
     while (!used.contains(random.nextInt())) {
       used.add(random.getSeed());

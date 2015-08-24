@@ -1,5 +1,6 @@
 package ch.kerbtier.lanthanum;
 
+import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 public class Mat33f {
@@ -132,6 +133,23 @@ public class Mat33f {
     return "<Mat3x3:" + data[0] + " " + data[1] + " " + data[2] + "/" + data[3] + " " + data[4] + " " + data[5] + "/"
         + data[6] + " " + data[7] + " " + data[8] + ">";
   }
+  
+  
+  public Mat33f inverse() {
+    Mat33f m = new Mat33f();
+    float d = determinant();
+    
+    m.data[0] =  (data[4]*data[8]-data[5]*data[7])/d;
+    m.data[1] = -(data[1]*data[8]-data[2]*data[7])/d;
+    m.data[2] =  (data[1]*data[5]-data[2]*data[4])/d;
+    m.data[3] = -(-data[6]*data[5]+data[3]*data[8])/d;
+    m.data[4] =  (-data[6]*data[2]+data[0]*data[8])/d;
+    m.data[5] = -(-data[3]*data[2]+data[0]*data[5])/d;
+    m.data[6] =  (-data[6]*data[4]+data[3]*data[7])/d;
+    m.data[7] = -(-data[6]*data[1]+data[0]*data[7])/d;
+    m.data[8] =  (-data[3]*data[1]+data[0]*data[4])/d;
+    return m;
+  }
 
   public float determinant() {
 
@@ -142,6 +160,10 @@ public class Mat33f {
     float det = data[0] * d1 - data[1] * d2 + data[2] * d3;
 
     return det;
+  }
+
+  public void store(FloatBuffer buf) {
+    buf.put(data);
   }
 
 }

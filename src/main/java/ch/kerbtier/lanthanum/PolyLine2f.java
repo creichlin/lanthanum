@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 public class PolyLine2f implements Iterable<Vec2f>, Comparable<PolyLine2f> {
-  private List<Vec2f> points = new ArrayList<Vec2f>();
+  private List<Vec2f> points = new ArrayList<>();
 
   public PolyLine2f() {
 
@@ -23,7 +23,7 @@ public class PolyLine2f implements Iterable<Vec2f>, Comparable<PolyLine2f> {
   }
 
   public List<Line2f> closedLines() {
-    List<Line2f> lines = new ArrayList<Line2f>();
+    List<Line2f> lines = new ArrayList<>();
 
     for (int cnt = 1; cnt < points.size(); cnt++) {
       lines.add(new Line2f(points.get(cnt - 1), points.get(cnt)));
@@ -32,9 +32,23 @@ public class PolyLine2f implements Iterable<Vec2f>, Comparable<PolyLine2f> {
     return lines;
   }
 
-  public PolyLine2f subDivide(float dfac, int times) {
+  public List<Line2f> lines() {
+    List<Line2f> lines = new ArrayList<>();
+    for (int cnt = 1; cnt < points.size(); cnt++) {
+      lines.add(new Line2f(points.get(cnt - 1), points.get(cnt)));
+    }
+    return lines;
+  }
 
+  public PolyLine2f subDivide(float dfac, int times) {
     PolyLine2f np = new PolyLine2f();
+    if(points.size() < 3) {
+      for(Vec2f v: points) {
+        np.push(v);
+      }
+      return np;
+    }
+    
 
     for (int cnt = 0; cnt < points.size(); cnt++) {
       Vec2f point1 = points.get(cnt);
@@ -320,7 +334,7 @@ public class PolyLine2f implements Iterable<Vec2f>, Comparable<PolyLine2f> {
   
   
   public Vec2f intersection(Line2f line) {
-    for(Line2f seg: closedLines()) {
+    for(Line2f seg: lines()) {
       Vec2f intersection = seg.intersectionSegmentWithLine(line);
       if(intersection != null) {
         return intersection;
@@ -329,7 +343,7 @@ public class PolyLine2f implements Iterable<Vec2f>, Comparable<PolyLine2f> {
     return null;
   }
 
-  public PolyLine2f add(Vec2f add) {
+  public PolyLine2f addArithmetic(Vec2f add) {
     PolyLine2f pl = new PolyLine2f();
 
     for(Vec2f p: points) {

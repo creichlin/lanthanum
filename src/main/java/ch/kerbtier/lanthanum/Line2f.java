@@ -43,8 +43,7 @@ public class Line2f {
   }
 
   public boolean rectContains(Vec2f point) {
-    return point.x() > start.x() && point.x() < end.x()
-        && point.y() > start.y() && point.y() < end.y();
+    return point.x() > start.x() && point.x() < end.x() && point.y() > start.y() && point.y() < end.y();
   }
 
   /**
@@ -88,12 +87,10 @@ public class Line2f {
   public Vec2f intersection(Line2f o) {
     Vec2f d1 = toVector();
     Vec2f d2 = o.toVector();
-    return cr_intersection(start.x(), start.y(), d1.x(), d1.y(), o.start.x(),
-        o.start.y(), d2.x(), d2.y());
+    return cr_intersection(start.x(), start.y(), d1.x(), d1.y(), o.start.x(), o.start.y(), d2.x(), d2.y());
   }
 
-  private Vec2f cr_intersection(float s1x, float s1y, float d1x,
-      float d1y, float s2x, float s2y, float d2x, float d2y) {
+  private Vec2f cr_intersection(float s1x, float s1y, float d1x, float d1y, float s2x, float s2y, float d2x, float d2y) {
     float det = d1x * d2y - d1y * d2x;
     if (det == 0) {
       return null;
@@ -111,12 +108,12 @@ public class Line2f {
   public Vec2f intersectionSegmentWithLine(Line2f line) {
     Vec2f d1 = toVector();
     Vec2f d2 = line.toVector();
-    return cr_intersection_seg_line(start.x(), start.y(), d1.x(), d1.y(), line.start.x(),
-        line.start.y(), d2.x(), d2.y());
+    return cr_intersection_seg_line(start.x(), start.y(), d1.x(), d1.y(), line.start.x(), line.start.y(), d2.x(),
+        d2.y());
   }
 
-  private Vec2f cr_intersection_seg_line(float s1x, float s1y, float d1x,
-      float d1y, float s2x, float s2y, float d2x, float d2y) {
+  private Vec2f cr_intersection_seg_line(float s1x, float s1y, float d1x, float d1y, float s2x, float s2y, float d2x,
+      float d2y) {
     float det = d1x * d2y - d1y * d2x;
     if (det == 0) {
       return null;
@@ -158,10 +155,10 @@ public class Line2f {
   public float factorTo(Vec2f target) {
     Vec2f norm = toVector();
     Vec2f tv = target.sub(start);
-    
+
     float fac = tv.length() / norm.length();
-    
-    if(Math.abs(norm.angle(tv)) < Math.PI / 2) {
+
+    if (Math.abs(norm.angle(tv)) < Math.PI / 2) {
       return fac;
     }
     return -fac;
@@ -181,6 +178,22 @@ public class Line2f {
     pl.push(this);
     pl.push(o);
     return pl.boundingBox();
+  }
+
+  /**
+   * gets the closest distance to the point. this line interpreted as infinitely long
+   * @param p
+   * @return
+   */
+  public float distanceTo(Vec2f p) {
+    Vec2f v = start;
+    Vec2f w = end;
+
+    float l2 = v.sub(w).lengthSquared();
+    float t = p.sub(v).dot(w.sub(v)) / l2;
+
+    Vec2f pro = v.add(w.sub(v).mul(t));
+    return pro.distance(p);
   }
 
 }

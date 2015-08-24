@@ -1,5 +1,7 @@
 package ch.kerbtier.lanthanum;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,6 +81,22 @@ public class IndicedMesh3f implements Iterable<Vec3f> {
 
   public int vertexCount() {
     return vertices.size();
+  }
+
+  public void pushVertices4(FloatBuffer verticesBuffer) {
+    for(Vec3f v3: vertices) {
+      verticesBuffer.put(v3.x());
+      verticesBuffer.put(v3.y());
+      verticesBuffer.put(v3.z());
+      verticesBuffer.put(1);
+    }
+    
+  }
+
+  public void pushIndices(IntBuffer indicesBuffer) {
+    for(int i: triangles) {
+      indicesBuffer.put(i);
+    }
   }
 
 }

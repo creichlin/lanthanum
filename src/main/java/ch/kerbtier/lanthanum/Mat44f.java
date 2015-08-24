@@ -1,5 +1,6 @@
 package ch.kerbtier.lanthanum;
 
+import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 public class Mat44f {
@@ -10,6 +11,12 @@ public class Mat44f {
     int length = Math.min(data.length, floats.length);
     for(int cnt = 0; cnt < length; cnt++) {
       data[cnt] = floats[cnt];
+    }
+    if(floats.length == 0) {
+      data[0] = 1;
+      data[5] = 1;
+      data[10] = 1;
+      data[15] = 1;
     }
   }
 
@@ -33,7 +40,7 @@ public class Mat44f {
     return nm;
   }
   
-  public static Mat44f rotation(Vec2f axis, float alpha) {
+  public static Mat44f rotation(Vec3f axis, float alpha) {
     throw new UnsupportedOperationException();
   }
   
@@ -169,5 +176,9 @@ public class Mat44f {
 
   public float get(int i) {
     return data[i];
+  }
+
+  public void store(FloatBuffer buf) {
+    buf.put(data);
   }
 }

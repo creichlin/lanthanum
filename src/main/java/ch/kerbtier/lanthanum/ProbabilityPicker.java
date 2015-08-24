@@ -5,8 +5,8 @@ import java.util.List;
 
 public class ProbabilityPicker<T> {
   private float total = 0;
-  private List<T> elements = new ArrayList<T>();
-  private List<Float> edges = new ArrayList<Float>();
+  private List<T> elements = new ArrayList<>();
+  private List<Float> edges = new ArrayList<>();
   
   public void add(float probability, T element) {
     total += probability;
